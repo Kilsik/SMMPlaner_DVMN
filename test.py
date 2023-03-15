@@ -30,9 +30,9 @@ def get_parse_docx(path):
             recovered = base64.b64decode(text_img)
             with open(filename, 'wb') as file:
                 file.write(recovered)
-    return ' '.join(text)
+    return ' '.join(text), filename
 
-print(get_parse_docx('post.docx'))
+
 def upload_docx(link):
     file_id = link.split('/')[-2]
     url = f"https://docs.google.com/document/d/{file_id}/export?format=docx&id={file_id}"
