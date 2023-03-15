@@ -30,7 +30,7 @@ def get_parse_docx(path):
             recovered = base64.b64decode(text_img)
             with open(filename, 'wb') as file:
                 file.write(recovered)
-    return ' '.join(text)
+    return ' '.join(text), filename
 
 
 def upload_docx(link):
