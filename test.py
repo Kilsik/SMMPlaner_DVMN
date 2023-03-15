@@ -1,7 +1,9 @@
+import base64
 import pygsheets
 import requests
 
 
+from docx_parser import DocumentParser
 from globals import *
 
 
@@ -14,6 +16,20 @@ max_row = worksheet_smm.rows
 
 all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
 
+def get_parse_docx(path):
+    doc = DocumentParser(path)
+    parse = []
+    for _type, item in doc.parse():
+        try:
+            parse.append(item['text'])
+        except:
+            img_data = item[1]['image']
+            filename = item[1]['filename']
+            text_img = img_data.split(',')[1]
+            recovered = base64.b64decode(text_img)
+            with open(filename, 'wb') as file:
+                file.write(recovered)
+    return parse
 
 def upload_docx(link):
     file_id = link.split('/')[-2]
@@ -21,6 +37,7 @@ def upload_docx(link):
     response = requests.get(url)
     with open('post.docx', 'wb') as f:
         f.write(response.content)
+
 
 
 def get_rows_for_posts(all_table_rows):
