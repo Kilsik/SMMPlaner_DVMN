@@ -5,6 +5,12 @@ env = Env()
 env.read_env()
 service_file_spreadsheet = env('SERVICE_FILE_SPREADSHEET')
 spreadsheet_smm_key = env('SPREADSHEET_SMM_KEY')
+vk_token = env('VK_ACCESS_TOKEN')
+vk_group_id = env('VK_GROUP_ID')
+vk_ver = '5.131'
+
+
+
 
 # cell groups
 SMM_TG = 0
