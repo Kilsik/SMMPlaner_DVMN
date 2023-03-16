@@ -1,6 +1,6 @@
 import requests
 import os
-import test
+import spreadsheets
 
 
 from globals import *
@@ -107,7 +107,7 @@ def publish_comic_to_vk(token, group_id, owner_id, media_id, msg, ver):
 if __name__ == '__main__':
     ''' Собираем все вместе и выводим идентификатор нового поста в vk '''
 
-    comment, img_filename = test.get_parse_docx('post.docx')
+    comment, img_filename = spreadsheets.get_parse_docx('post.docx')
     try:
         upload_url = get_upload_server_addr(vk_token, vk_group_id, vk_ver)
         photo, server, vk_hash = upload_photo(upload_url, img_filename)
