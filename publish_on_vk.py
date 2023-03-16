@@ -6,7 +6,6 @@ import test
 from globals import *
 
 
-
 class VKException(Exception):
     '''
     Ловим ответы с ошибками от vk
@@ -75,7 +74,7 @@ def save_wall_photo(token, group_id, ver, photo, server, vk_hash):
         'server':  server,
         'hash':  vk_hash,
         }
-    url ='https://api.vk.com/method/photos.saveWallPhoto'
+    url = 'https://api.vk.com/method/photos.saveWallPhoto'
     response = requests.post(url, headers=headers, params=params)
     response.raise_for_status()
     is_response_good(response)
@@ -122,6 +121,3 @@ if __name__ == '__main__':
     finally:
         if os.path.isfile(img_filename):
             os.remove(img_filename)
-
-
-
