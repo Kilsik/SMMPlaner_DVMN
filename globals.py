@@ -8,6 +8,8 @@ spreadsheet_smm_key = env('SPREADSHEET_SMM_KEY')
 vk_token = env('VK_ACCESS_TOKEN')
 vk_group_id = env('VK_GROUP_ID')
 vk_ver = '5.131'
+telegram_token = env("TELEGRAM_TOKEN")
+telegram_chat_id = env("TELEGRAM_CHAT_ID")
 
 
 
