@@ -1,13 +1,7 @@
 import requests
-import random
 import os
-import sys
+import spreadsheets
 
-import test
-
-from urllib.parse import urlparse
-from pathlib import Path
-from dotenv import load_dotenv
 
 
 class VKException(Exception):
@@ -19,7 +13,7 @@ class VKException(Exception):
 
 
 def get_upload_server_addr(token, group_id, ver):
-    ''' Получаем адрес сервера для загрузки изображения в vk '''
+
 
     headers = {
         'Authorization': f'Bearer {token}'
@@ -78,7 +72,7 @@ def save_wall_photo(token, group_id, ver, photo, server, vk_hash):
         'server':  server,
         'hash':  vk_hash,
         }
-    url ='https://api.vk.com/method/photos.saveWallPhoto'
+    url = 'https://api.vk.com/method/photos.saveWallPhoto'
     response = requests.post(url, headers=headers, params=params)
     response.raise_for_status()
     is_response_good(response)
@@ -88,7 +82,7 @@ def save_wall_photo(token, group_id, ver, photo, server, vk_hash):
     return owner_id, media_id
 
 
-def publish_post_to_vk(token, group_id, owner_id, media_id, msg, ver):
+
     ''' Публикуем пост в сообществе в vk '''
 
     headers = {
@@ -129,11 +123,6 @@ def delete_vk_post(token, group_id, post_id, ver):
 if __name__ == '__main__':
     ''' Собираем все вместе и выводим идентификатор нового поста в vk '''
 
-    load_dotenv()
-    vk_token = os.environ["VK_ACCESS_TOKEN"]
-    vk_ver = '5.131'
-    vk_group_id = os.environ["VK_GROUP_ID"]
-    comment, img_filename = test.get_parse_docx('Кошка заходит в кафе.docx')
     try:
         upload_url = get_upload_server_addr(vk_token, vk_group_id, vk_ver)
         photo, server, vk_hash = upload_photo(upload_url, img_filename)
@@ -148,6 +137,3 @@ if __name__ == '__main__':
     finally:
         if os.path.isfile(img_filename):
             os.remove(img_filename)
-
-
-

@@ -26,8 +26,8 @@ __pycache__
 client_secret.json
 smmplaner-dvmn-22aa1e34bc03.json
 smm-planer-2ff621f473e2.json
-#test.py
+test.py
 test2.py
 test3.py
 .env
-.venv/
+
