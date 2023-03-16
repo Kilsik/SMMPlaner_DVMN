@@ -1,13 +1,10 @@
 import requests
-import random
 import os
-import sys
-
-from urllib.parse import urlparse
-from pathlib import Path
-from dotenv import load_dotenv
-
 import test
+
+
+from globals import *
+
 
 
 class VKException(Exception):
@@ -19,7 +16,7 @@ class VKException(Exception):
 
 
 def get_upload_server_addr(token, group_id, ver):
-    ''' Получаем адрес сервера для загрузки комикса в vk '''
+    ''' Получаем адрес сервера для размещения поста в vk '''
 
     headers = {
         'Authorization': f'Bearer {token}'
@@ -36,9 +33,7 @@ def get_upload_server_addr(token, group_id, ver):
 
 
 def is_response_good(response):
-    '''
-    Проверяем ответ от vk
-    '''
+    ''' Проверяем ответ от vk '''
 
     checking_response = response.json()
     if 'error' in checking_response:
@@ -51,7 +46,7 @@ def is_response_good(response):
 
 
 def upload_photo(url, img_filename):
-    ''' Загружаем картинку комикса на сервер vk '''
+    ''' Загружаем картинку на сервер vk '''
 
     with open(img_filename, 'rb') as file:
         vk_file = {
@@ -91,7 +86,7 @@ def save_wall_photo(token, group_id, ver, photo, server, vk_hash):
 
 
 def publish_comic_to_vk(token, group_id, owner_id, media_id, msg, ver):
-    ''' Публикуем комикс в сообществе в vk '''
+    ''' Публикуем пост в сообществе в vk '''
 
     headers = {
         'Authorization': f'Bearer {token}'
@@ -113,10 +108,6 @@ def publish_comic_to_vk(token, group_id, owner_id, media_id, msg, ver):
 if __name__ == '__main__':
     ''' Собираем все вместе и выводим идентификатор нового поста в vk '''
 
-    load_dotenv()
-    vk_token = os.environ["VK_ACCESS_TOKEN"]
-    vk_ver = '5.131'
-    vk_group_id = os.environ["VK_GROUP_ID"]
     comment, img_filename = test.get_parse_docx('post.docx')
     try:
         upload_url = get_upload_server_addr(vk_token, vk_group_id, vk_ver)
@@ -129,7 +120,7 @@ if __name__ == '__main__':
     except VKException as error:
         print(error)
     finally:
-        if os.path.isfile(img):
+        if os.path.isfile(img_filename):
             os.remove(img_filename)
 
 
