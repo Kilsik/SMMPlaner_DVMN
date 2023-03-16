@@ -3,8 +3,6 @@ import os
 import spreadsheets
 
 
-from globals import *
-
 
 class VKException(Exception):
     '''
@@ -15,7 +13,7 @@ class VKException(Exception):
 
 
 def get_upload_server_addr(token, group_id, ver):
-    ''' Получаем адрес сервера для размещения поста в vk '''
+
 
     headers = {
         'Authorization': f'Bearer {token}'
@@ -84,7 +82,7 @@ def save_wall_photo(token, group_id, ver, photo, server, vk_hash):
     return owner_id, media_id
 
 
-def publish_comic_to_vk(token, group_id, owner_id, media_id, msg, ver):
+
     ''' Публикуем пост в сообществе в vk '''
 
     headers = {
@@ -104,18 +102,36 @@ def publish_comic_to_vk(token, group_id, owner_id, media_id, msg, ver):
     return response.json()
 
 
+def delete_vk_post(token, group_id, post_id, ver):
+    ''' Удаляем пост со стены '''
+
+    headers = {
+        'Authorization': f'Bearer {token}'
+        }
+    vk_params = {
+        'v': ver,
+        'owner_id': f'-{group_id}',
+        'post_id': post_id,
+        }
+    url = 'https://api.vk.com/method/wall.delete'
+    response = requests.post(url, headers=headers, params=vk_params)
+    response.raise_for_status()
+    is_response_good(response)
+    return response.json()
+
+
 if __name__ == '__main__':
     ''' Собираем все вместе и выводим идентификатор нового поста в vk '''
 
-    comment, img_filename = spreadsheets.get_parse_docx('post.docx')
     try:
         upload_url = get_upload_server_addr(vk_token, vk_group_id, vk_ver)
         photo, server, vk_hash = upload_photo(upload_url, img_filename)
         owner_id, media_id = save_wall_photo(vk_token, vk_group_id, vk_ver,
             photo, server, vk_hash)
-        post_id = publish_comic_to_vk(vk_token, vk_group_id, owner_id, media_id,
+        post_id = publish_post_to_vk(vk_token, vk_group_id, owner_id, media_id,
             comment, vk_ver)
         print(post_id)
+        deleted_post_id = delete_vk_post(vk_token,vk_group_id, '1', vk_ver)
     except VKException as error:
         print(error)
     finally:
