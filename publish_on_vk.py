@@ -2,6 +2,8 @@ import requests
 import os
 import spreadsheets
 
+from globals import *
+
 
 
 class VKException(Exception):
@@ -82,7 +84,8 @@ def save_wall_photo(token, group_id, ver, photo, server, vk_hash):
     return owner_id, media_id
 
 
-
+def publish_post_to_vk(token, group_id, owner_id, media_id,
+            msg, ver):
     ''' Публикуем пост в сообществе в vk '''
 
     headers = {
@@ -122,7 +125,7 @@ def delete_vk_post(token, group_id, post_id, ver):
 
 if __name__ == '__main__':
     ''' Собираем все вместе и выводим идентификатор нового поста в vk '''
-
+    comment, img_filename = spreadsheets.get_parse_file('Кошка заходит в кафе.docx')
     try:
         upload_url = get_upload_server_addr(vk_token, vk_group_id, vk_ver)
         photo, server, vk_hash = upload_photo(upload_url, img_filename)

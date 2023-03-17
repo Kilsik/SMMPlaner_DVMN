@@ -89,9 +89,9 @@ def get_parse_file(path):
     return ' '.join(text), filename
 
 
-def get_datetime(date, time='00:00'):
+def get_datetime(date, time='00:00:00'):
     post_datetime = f"{date} {time}"
-    return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M')
+    return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
 
 
 def get_update_row(row, post_id, network='TG'):
