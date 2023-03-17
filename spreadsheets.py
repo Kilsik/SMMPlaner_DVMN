@@ -2,6 +2,9 @@ import base64
 import pygsheets
 import requests
 import datetime
+import os
+
+import publish_on_vk
 
 
 from docx_parser import DocumentParser
@@ -21,8 +24,7 @@ def get_time_to_post(date, time, n):
     else:
         post_time = datetime.datetime.combine(datetime.date.today(),
             datetime.datetime.now().time()) + datetime.timedelta(minuts=1)
-    current_time = datetime.datetime.combine(datetime.date.today(),
-        datetime.datetime.now().time())
+    current_time = datetime.datetime.now()
     delta = current_time-post_time
     zero_time = datetime.timedelta(microseconds=0)
     if zero_time <= (post_time - current_time) <= time_interval:
@@ -38,22 +40,25 @@ def get_rows_for_posts(all_table_rows):
     '''
     rows_for_post = []
     for row in all_table_rows:
-        tg = True if row[SMM_TG].value == 'True' and row[SMM_TG].color == (None,
+        tg = True if row[SMM_TG].value == 'TRUE' and row[SMM_TG].color == (None,
             None, None, None) and (not row[SMM_TG_POST_ID].value) else False
-        vk = True if row[SMM_VK].value == 'True' and row[SMM_VK].color == (None,
+        vk = True if row[SMM_VK].value == 'TRUE' and row[SMM_VK].color == (None,
             None, None, None) and (not row[SMM_VK_POST_ID].value) else False
-        ok = True if row[SMM_OK].value == 'True' and row[SMM_OK].color == (None,
+        ok = True if row[SMM_OK].value == 'TRUE' and row[SMM_OK].color == (None,
             None, None, None) and (not row[SMM_OK_POST_ID].value) else False
-        deleted = True if row[SMM_DATE_ACTUAL_POST].color == (None, None, None,
-                None) and row[SMM_DATE_ACTUAL_POST].value else False
-        need_time = get_time_to_post(row[SMM_DATE_POST].value,
+        deleted = False
+        if row[SMM_DATE_ACTUAL_POST].color == (None, None, None,
+                None) and row[SMM_DATE_ACTUAL_POST].value:
+            delete_date = datetime.datetime.strptime(
+                row[SMM_DATE_ACTUAL_POST].value, '%d.%m.%Y').date()
+            deleted = (delete_date == datetime.date.today())
+        need_time = True if deleted else get_time_to_post(row[SMM_DATE_POST].value,
             row[SMM_TIME_POST].value, n)
         if not row[SMM_GOOGLE_DOC].value and not row[SMM_GIF_LINK].value:
             continue
-        elif row[SMM_GOOGLE_DOC].value:
+        elif row[SMM_GOOGLE_DOC].value or row[SMM_GIF_LINK].value:
             if (tg or vk or ok or deleted) and need_time:
                 rows_for_post.append(row)
-    print(rows_for_post)
     return rows_for_post
 
 
@@ -91,13 +96,23 @@ def get_parse_file(path):
 
 def get_datetime(date, time='00:00'):
     post_datetime = f"{date} {time}"
-    return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M')
+    return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
 
 
-def get_update_row(row, post_id, network='TG'):
+def update_post_id(row, post_id, network):
     row[globals()[f"SMM_{network}"]].color = (0, 1, 0, 0)
     row[globals()[f"SMM_{network}_POST_ID"]].value = post_id
     row[globals()[f"SMM_{network}"]].value = True
+
+
+def fetch_gif_image(image_url):
+    url = image_url
+    filename = os.path.basename(image_url)
+    response = requests.get(url)
+    response.raise_for_status()
+    with open(filename, 'wb') as file:
+        file.write(response.content)
+    return filename
 
 
 def main():
@@ -112,10 +127,57 @@ def main():
 
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post = get_rows_for_posts(all_table_rows)
+    print(rows_for_post)
     for row in rows_for_post:
-        # Тут по идее надо бы наши функции по публикации и удалению вставить
-        # с нужными условиями
-        pass
+        print(row)
+        vk_flag = True if row[SMM_VK].value == 'TRUE' else False
+        tg_flag = True if row[SMM_TG].value == 'TRUE' else False
+        ok_flag = True if row[SMM_OK].value == 'TRUE' else False
+        if vk_flag:
+            if row[SMM_DATE_ACTUAL_POST].value:
+                delete_date = datetime.datetime.strptime(
+                    row[SMM_DATE_ACTUAL_POST].value, '%d.%m.%Y').date()
+            else:
+                delete_date = None
+            if datetime.date.today() == delete_date:
+                post_id = row[SMM_VK_POST_ID].value
+                publish_on_vk.delete_vk_post(vk_token, vk_group_id, post_id,
+                    vk_ver)
+                row[SMM_DATE_ACTUAL_POST].color = (0, 1, 0, 0)
+                row[SMM_VK_POST_ID].value = ''
+                continue
+            file_link = ''
+            image_link = ''
+            if row[SMM_GOOGLE_DOC].value:
+                file_link = row[SMM_GOOGLE_DOC].value
+            else:
+                image_link = row[SMM_GIF_LINK].value
+                print(image_link)
+            if file_link:
+                downloaded_doc = download_file(file_link)
+                text, img_filename = get_parse_file(downloaded_doc)
+                if row[SMM_VK].value == 'TRUE':
+                    post_id = publish_on_vk.publish_to_vk(img_filename, text,
+                        vk_token, vk_group_id, vk_ver)
+            elif image_link:
+                img_filename = fetch_gif_image(image_link)
+                print(img_filename)
+                if row[SMM_VK].value == 'TRUE':
+                    post_id = publish_on_vk.publish_to_vk(img_filename, '',
+                        vk_token, vk_group_id, vk_ver)
+            update_post_id(row, post_id, 'VK')
+        elif tg_flag:
+            # Публикация в телеграмме
+            pass
+        elif ok_flag:
+            # Публикация в одноклассниках
+            pass
+        if img_filename:
+            os.remove(img_filename)
+        if downloaded_doc:
+            os.remove(downloaded_doc)
+
+
 
 
 
