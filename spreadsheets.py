@@ -94,7 +94,7 @@ def get_parse_file(path):
     return ' '.join(text), filename
 
 
-def get_datetime(date, time='00:00'):
+def get_datetime(date, time='00:00:00'):
     post_datetime = f"{date} {time}"
     return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
 
