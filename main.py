@@ -1,6 +1,7 @@
 import datetime
 import os
 import time
+import re
 from asyncio import run
 
 
@@ -28,6 +29,14 @@ def fetch_gif_image(image_url):
     with open(filename, 'wb') as file:
         file.write(response.content)
     return filename
+
+
+def format_text(text):
+    formated_txt = re.sub(" +", " ", text)
+    formated_txt = formated_txt.replace(" \"", " «")
+    formated_txt = formated_txt.replace("\" ", "» ")
+    formated_txt = formated_txt.replace(" - ", " – ")
+    return formated_txt
 
 
 def main():
@@ -71,6 +80,7 @@ def main():
         if file_link:
             downloaded_doc = get_file(file_link)
             text, image = get_parsed_file(downloaded_doc)
+            text = format_text(text)
             if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
                 post_id = run(send_post(telegram_chat_id, bot, text, image))
                 update_post_id(row, post_id, network='TG')
