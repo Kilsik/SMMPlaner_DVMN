@@ -66,6 +66,7 @@ def main():
     max_row = worksheet_smm.rows
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
+    print(rows_for_delete)
     date_now = datetime.datetime.now()
     today = date_now.date().strftime('%d.%m.%Y')
     hour = date_now.strftime('%H:%M:00')
@@ -103,7 +104,7 @@ def main():
                 post_id = publish_to_ok(ok_app_key, ok_access_token, ok_sesion_key, ok_group_id, text, image)
                 update_post_id(row, post_id, network='OK')
         elif image_link:
-            text = ' '
+            text = None
             image = fetch_gif_image(image_link)
             bot = telegram.Bot(token=telegram_token)
             if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
@@ -118,13 +119,15 @@ def main():
                 update_post_id(row, post_id, network='OK')
     for row in rows_for_delete:
         delete_date = row[SMM_DATE_ACTUAL_POST].value
-        if delete_date != today:
+        print(delete_date)
+        if delete_date > today:
             continue
         if row[SMM_VK_POST_ID]:
-            post_id = row[SMM_VK_POST_ID].value
-            delete_vk_post(vk_token, vk_group_id, post_id, vk_ver)
-        if row[SMM_TG_POST_ID]:
-            pass
+            print('qwe')
+        #     post_id = row[SMM_VK_POST_ID].value
+        #     delete_vk_post(vk_token, vk_group_id, post_id, vk_ver)
+        # if row[SMM_TG_POST_ID]:
+        #     pass
         if row[SMM_OK_POST_ID]:
             post_id = row[SMM_OK_POST_ID].value
             delete_ok_post(ok_app_key, ok_access_token, ok_sesion_key, post_id)
