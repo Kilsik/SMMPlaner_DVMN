@@ -52,6 +52,17 @@ def publish_post_to_ok(app_key, token, session_key, group_id, text, photo_token=
                 }
             ]
         }
+    elif not text:
+        attachment = {
+            "media": [
+                {
+                    "type": "photo",
+                    "list": [
+                        {"id": photo_token}
+                    ]
+                }
+            ]
+        }
     else:
         attachment = {
           "media": [
@@ -109,11 +120,10 @@ def publish_to_ok(app_key, token, session_key, group_id, text=None, img_filename
 
     if not img_filename:
         post_id = publish_post_to_ok(app_key, token, session_key, group_id, text)
-    elif not text:
-        post_id = publish_post_to_ok(app_key, token, session_key, group_id, img_filename)
     else:
         upload_url = get_upload_url(app_key, token, session_key, group_id)
         photo_token = upload_photo_ok(upload_url, img_filename)
+
         post_id = publish_post_to_ok(app_key, token, session_key, group_id, text, photo_token)
     return post_id
 
