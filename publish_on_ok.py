@@ -1,15 +1,6 @@
 import requests
-import os
 import hashlib
-
 import json
-from publish_on_vk import *
-from main import *
-
-OK_GROUP_ID = '70000002104498'
-OK_LONG_ACCESS_TOKEN ='tkn1If99DtalJLkKXevvskUVIdgpZDyIhu0BwMoLNvi934umx3QOzRjgIpXQrqZL37v0u7'
-OK_SECRET_SESSION_KEY = '29fc02c58a30e2ac74c7c91e51979a07'
-OK_APPLICATION_KEY = 'CGCBMELGDIHBABABA'
 
 
 def get_hash_signature(signature):
@@ -34,9 +25,6 @@ def get_upload_url(app_key, token, session_key, group_id):
     return response.json()['upload_url']
 
 
-url_ok = get_upload_url(OK_APPLICATION_KEY, OK_LONG_ACCESS_TOKEN, OK_SECRET_SESSION_KEY, OK_GROUP_ID)
-
-
 def upload_photo_ok(url, img_filename):
     ''' Загружаем картинку на сервер ok '''
 
@@ -46,34 +34,39 @@ def upload_photo_ok(url, img_filename):
             }
         response = requests.post(url, files=ok_file)
     response.raise_for_status()
-    is_response_good(response)
     response_params = response.json()
     for key in response_params['photos']:
         photo_token = response_params['photos'][key]['token']
         return photo_token
 
 
-photo_token = upload_photo_ok(url_ok, 'giphy.gif')
-print(photo_token)
 
-
-def publish_to_ok(app_key, token, session_key, group_id, photo_token, text):
+def publish_post_to_ok(app_key, token, session_key, group_id, text, photo_token=None):
     ''' Публикуем пост в сообществе в vk '''
-
-    attachment = {
-      "media": [
-        {
-          "type": "photo",
-          "list": [
-            {"id": photo_token}
-          ]
-        },
-        {
-          "type": "text",
-          "text": text
+    if not photo_token:
+        attachment = {
+            "media": [
+                {
+                    "type": "text",
+                    "text": text
+                }
+            ]
         }
-      ]
-    }
+    else:
+        attachment = {
+          "media": [
+            {
+              "type": "photo",
+              "list": [
+                {"id": photo_token}
+              ]
+            },
+            {
+              "type": "text",
+              "text": text
+            }
+          ]
+        }
     attachment_json = json.dumps(attachment)
     signature = f'application_key={app_key}attachment={attachment}format=jsongid={group_id}method=mediatopic.posttype=GROUP_THEME{session_key}'
     sig = get_hash_signature(signature)
@@ -111,5 +104,16 @@ def delete_ok_post(app_key, token, session_key, topic_id):
     response.raise_for_status()
     return response.json()
 
+def publish_to_ok(app_key, token, session_key, group_id, text=None, img_filename=None):
+    ''' Собираем все вместе и выводим идентификатор нового поста в ok '''
 
-print(delete_ok_post(OK_APPLICATION_KEY, OK_LONG_ACCESS_TOKEN, OK_SECRET_SESSION_KEY, '156357685959602'))
+    if not img_filename:
+        post_id = publish_post_to_ok(app_key, token, session_key, group_id, text)
+    elif not text:
+        post_id = publish_post_to_ok(app_key, token, session_key, group_id, img_filename)
+    else:
+        upload_url = get_upload_url(app_key, token, session_key, group_id)
+        photo_token = upload_photo_ok(upload_url, img_filename)
+        post_id = publish_post_to_ok(app_key, token, session_key, group_id, text, photo_token)
+    return post_id
+
