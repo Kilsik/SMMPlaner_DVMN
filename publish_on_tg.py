@@ -9,3 +9,7 @@ async def send_post(telegram_chat_id, bot, text, image):
 async def send_animation_image(telegram_chat_id, bot, image):
     message = await bot.sendAnimation(chat_id=telegram_chat_id, animation=image)
     return message['message_id']
+
+
+async def delete_tg_post(telegram_chat_id, bot, post_id):
+    await bot.delete_message(chat_id=telegram_chat_id, message_id=post_id)

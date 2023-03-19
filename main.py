@@ -19,7 +19,7 @@ from dotenv import load_dotenv
 from spreadsheets import (get_rows_for_posts, get_file, get_parsed_file, update_post_id, get_time_to_post,
                           SMM_TG, SMM_OK, SMM_VK, SMM_DATE_POST, SMM_TIME_POST, SMM_DATE_ACTUAL_POST, SMM_GOOGLE_DOC,
                           SMM_IMAGE_LINK, SMM_TG_POST_ID, SMM_VK_POST_ID, SMM_OK_POST_ID, SMM_DELETE_POST)
-from publish_on_tg import send_post, send_animation_image
+from publish_on_tg import send_post, send_animation_image, delete_tg_post
 
 
 def fetch_gif_image(image_url):
@@ -121,15 +121,20 @@ def main():
         delete_date = row[SMM_DATE_ACTUAL_POST].value
         if delete_date > today:
             continue
-        if row[SMM_VK_POST_ID].value:
-            post_id = row[SMM_VK_POST_ID].value
-            delete_vk_post(vk_token, vk_group_id, post_id, vk_ver)
-        if row[SMM_TG_POST_ID].value:
+        try:
+            if row[SMM_VK_POST_ID].value:
+                post_id = row[SMM_VK_POST_ID].value
+                delete_vk_post(vk_token, vk_group_id, post_id, vk_ver)
+            if row[SMM_TG_POST_ID].value:
+                bot = telegram.Bot(token=telegram_token)
+                post_id = row[SMM_TG_POST_ID].value
+                run(delete_tg_post(telegram_chat_id, bot, post_id))
+            if row[SMM_OK_POST_ID].value:
+                post_id = row[SMM_OK_POST_ID].value
+                delete_ok_post(ok_app_key, ok_access_token, ok_sesion_key, post_id)
+            row[SMM_DELETE_POST].value = True
+        except:
             pass
-        if row[SMM_OK_POST_ID].value:
-            post_id = row[SMM_OK_POST_ID].value
-            delete_ok_post(ok_app_key, ok_access_token, ok_sesion_key, post_id)
-        row[SMM_DELETE_POST].value = True
 
 
 if __name__ == '__main__':
