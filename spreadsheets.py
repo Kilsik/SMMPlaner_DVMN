@@ -1,9 +1,45 @@
 import base64
+import datetime
 
 import requests
 from docx_parser import DocumentParser
 
-from globals import *
+
+
+SMM_TG = 0
+SMM_OK = 1
+SMM_VK = 2
+SMM_DATE_POST = 3
+SMM_TIME_POST = 4
+SMM_DATE_ACTUAL_POST = 5
+SMM_GOOGLE_DOC = 6
+SMM_IMAGE_LINK = 7
+SMM_TG_POST_ID = 8
+SMM_VK_POST_ID = 9
+SMM_OK_POST_ID = 10
+SMM_DELETE_POST = 11
+
+
+def get_time_to_post(date, time, n):
+    '''
+    Чтобы выбрать посты, которые надо публиковать сейчас или в ближайшие n минут
+    '''
+
+    time_interval = datetime.timedelta(minutes=int(n))
+    if not date:
+        return True
+    if time:
+        post_time = get_datetime(date, time)
+    else:
+        post_time = datetime.datetime.combine(datetime.date.today(),
+            datetime.datetime.now().time()) + datetime.timedelta(minuts=1)
+    current_time = datetime.datetime.now()
+    delta = current_time-post_time
+    zero_time = datetime.timedelta(microseconds=0)
+    if zero_time <= (post_time - current_time) <= time_interval:
+        return True
+    else:
+        return False
 
 
 def update_post_id(row, post_id, network):
@@ -12,7 +48,7 @@ def update_post_id(row, post_id, network):
     row[globals()[f"SMM_{network}"]].value = True
 
 
-def get_parse_file(path):
+def get_parsed_file(path):
     doc = DocumentParser(path)
     text = []
     filename = None
@@ -28,7 +64,7 @@ def get_parse_file(path):
     return ' '.join(text), filename
 
 
-def get_download_file(link):
+def get_file(link):
     file_id = link.split('/')[-2]
     url = f"https://docs.google.com/document/d/{file_id}/export?format=docx&id={file_id}"
     response = requests.get(url)
@@ -40,6 +76,7 @@ def get_download_file(link):
 
 def get_rows_for_posts(all_table_rows):
     rows_for_post = []
+    rows_for_delete = []
     for row in all_table_rows:
         if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
             rows_for_post.append(row)
@@ -47,4 +84,11 @@ def get_rows_for_posts(all_table_rows):
             rows_for_post.append(row)
         elif row[SMM_VK].value == 'TRUE' and row[SMM_VK_POST_ID].value == '':
             rows_for_post.append(row)
-    return rows_for_post
+        elif row[SMM_DATE_ACTUAL_POST].value and row[SMM_DELETE_POST].value == 'FALSE':
+            rows_for_delete.append(row)
+    return rows_for_post, rows_for_delete
+
+
+def get_datetime(date, time='00:00:00'):
+    post_datetime = f"{date} {time}"
+    return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
