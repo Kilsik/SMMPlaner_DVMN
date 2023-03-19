@@ -74,7 +74,6 @@ def main():
     date_now = datetime.datetime.now()
     today = date_now.date().strftime('%d.%m.%Y')
     time_now = date_now.strftime('%H:%M:00')
-    hour = date_now.strftime('%H:%M:00')
     post_punlish = worksheet_smm.cell(f'M{min_row}').value
     min_range_row = worksheet_smm.cell('M1')
     if post_punlish == 'TRUE' and not worksheet_smm.cell(f'F{min_row}').value:
