@@ -40,9 +40,11 @@ def format_text(text):
     return formated_txt
 
 
+
 def get_datetime(date, time='00:00:00'):
     post_datetime = f"{date} {time}"
     return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
+
 
 
 def main():
@@ -67,13 +69,21 @@ def main():
     gc = pygsheets.authorize(service_file=service_file_spreadsheet)
     spreadsheet_smm = gc.open_by_key(spreadsheet_smm_key)
     worksheet_smm = spreadsheet_smm.sheet1
-    min_row = 4
+    min_row = worksheet_smm.cell('M2').value
     max_row = worksheet_smm.rows
-    all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
-    rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
     date_now = datetime.datetime.now()
     today = date_now.date().strftime('%d.%m.%Y')
     time_now = date_now.strftime('%H:%M:00')
+    hour = date_now.strftime('%H:%M:00')
+    post_punlish = worksheet_smm.cell(f'M{min_row}').value
+    min_range_row = worksheet_smm.cell('M1')
+    if post_punlish == 'TRUE' and not worksheet_smm.cell(f'F{min_row}').value:
+        min_range_row.value = int(min_row) + 1
+    elif post_punlish == 'TRUE' and worksheet_smm.cell(f'F{min_row}').value < today:
+        min_range_row.value = int(min_row) + 1
+    all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
+    rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
+
 
     for row in rows_for_post:
         if not row[SMM_DATE_POST].value:
