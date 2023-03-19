@@ -33,18 +33,18 @@ def fetch_gif_image(image_url):
 
 
 def format_text(text):
-    formated_txt = re.sub(" +", " ", text)
-    formated_txt = formated_txt.replace(" \"", " «")
-    formated_txt = formated_txt.replace("\" ", "» ")
-    formated_txt = formated_txt.replace(" - ", " – ")
+    formated_txt = re.sub(' +', ' ', text)
+    formated_txt = formated_txt.replace(' "', ' «')
+    formated_txt = formated_txt.replace('" ', '» ')
+    formated_txt = formated_txt.replace(' - ', ' – ')
     return formated_txt
 
 
 def main():
     load_dotenv()
     # Telegram Secret
-    telegram_token = os.getenv("TELEGRAM_TOKEN")
-    telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID")
+    telegram_token = os.getenv('TELEGRAM_TOKEN')
+    telegram_chat_id = os.getenv('TELEGRAM_CHAT_ID')
     bot = telegram.Bot(token=telegram_token)
     # vkontakte secret
     vk_token = os.getenv('VK_ACCESS_TOKEN')
@@ -66,8 +66,6 @@ def main():
     max_row = worksheet_smm.rows
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
-    print(rows_for_post)
-    print(rows_for_delete)
     date_now = datetime.datetime.now()
     today = date_now.date().strftime('%d.%m.%Y')
     hour = date_now.strftime('%H:%M:00')
@@ -94,33 +92,31 @@ def main():
             downloaded_doc = get_file(file_link)
             text, image = get_parsed_file(downloaded_doc)
             text = format_text(text)
-            if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
+            if row[SMM_TG].value == 'TRUE' and not row[SMM_TG_POST_ID].value:
                 post_id = run(send_post(telegram_chat_id, bot, text, image))
                 update_post_id(row, post_id, network='TG')
-            if row[SMM_VK].value == 'TRUE' and row[SMM_VK_POST_ID].value == '':
+            if row[SMM_VK].value == 'TRUE' and not row[SMM_VK_POST_ID].value:
                 post_id = publish_to_vk(image, text, vk_token,
                         vk_group_id, vk_ver)
                 update_post_id(row, post_id, network='VK')
-            if row[SMM_OK].value == 'TRUE' and row[SMM_OK_POST_ID].value == '':
+            if row[SMM_OK].value == 'TRUE' and not row[SMM_OK_POST_ID].value:
                 post_id = publish_to_ok(ok_app_key, ok_access_token, ok_sesion_key, ok_group_id, text, image)
                 update_post_id(row, post_id, network='OK')
         elif image_link:
             text = None
             image = fetch_gif_image(image_link)
             bot = telegram.Bot(token=telegram_token)
-            if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
+            if row[SMM_TG].value == 'TRUE' and not row[SMM_TG_POST_ID].value:
                 post_id = run(send_animation_image(telegram_chat_id, bot, image))
                 update_post_id(row, post_id, network='TG')
-            if row[SMM_VK].value == 'TRUE' and row[SMM_VK_POST_ID].value == '':
-                post_id = publish_to_vk(image, '', vk_token, vk_group_id,
-                        vk_ver)
+            if row[SMM_VK].value == 'TRUE' and not row[SMM_VK_POST_ID].value:
+                post_id = publish_to_vk(image, '', vk_token, vk_group_id, vk_ver)
                 update_post_id(row, post_id, network='VK')
-            if row[SMM_OK].value == 'TRUE' and row[SMM_OK_POST_ID].value == '':
+            if row[SMM_OK].value == 'TRUE' and not row[SMM_OK_POST_ID].value:
                 post_id = publish_to_ok(ok_app_key, ok_access_token, ok_sesion_key, ok_group_id, text, image)
                 update_post_id(row, post_id, network='OK')
     for row in rows_for_delete:
         delete_date = row[SMM_DATE_ACTUAL_POST].value
-        print(delete_date)
         if delete_date > today:
             continue
         if row[SMM_VK_POST_ID].value:
