@@ -100,7 +100,7 @@ def main():
         elif row[SMM_IMAGE_LINK].value:
             image_link = row[SMM_IMAGE_LINK].value
             gif_image = fetch_gif_image(image_link)
-        if row[SMM_TG].value != 'FALSE':
+        if row[SMM_TG].value != 'FALSE' and row[SMM_TG_POST_ID].value == '':
             bot = telegram.Bot(token=telegram_token)
             if (text and gif_image) or gif_image:
                 post_id = run(send_animation_image(telegram_chat_id, bot, gif_image, text))
@@ -110,11 +110,11 @@ def main():
                 update_post_id(row, post_id, network='TG')
         if gif_image:
             image = gif_image
-        if row[SMM_VK].value != 'FALSE':
+        if row[SMM_VK].value != 'FALSE' and row[SMM_VK_POST_ID].value == '':
             post_id = publish_to_vk(image, text, vk_token,
                                     vk_group_id, vk_ver)
             update_post_id(row, post_id, network='VK')
-        if row[SMM_OK].value != 'FALSE':
+        if row[SMM_OK].value != 'FALSE' and row[SMM_OK_POST_ID].value == '':
             post_id = publish_to_ok(ok_app_key, ok_access_token, ok_sesion_key, ok_group_id, text, image)
             update_post_id(row, post_id, network='OK')
     for row in rows_for_delete:
