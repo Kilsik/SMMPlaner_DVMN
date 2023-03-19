@@ -1,25 +1,23 @@
 import datetime
 import os
-import time
 import re
+import time
 from asyncio import run
-
 
 import pygsheets
 import requests
 import schedule
 import telegram
-
-from publish_on_vk import publish_to_vk, delete_vk_post
-from publish_on_ok import publish_to_ok, delete_ok_post
-
 from dotenv import load_dotenv
 
-
-from spreadsheets import (get_rows_for_posts, get_file, get_parsed_file, update_post_id, get_time_to_post,
-                          SMM_TG, SMM_OK, SMM_VK, SMM_DATE_POST, SMM_TIME_POST, SMM_DATE_ACTUAL_POST, SMM_GOOGLE_DOC,
-                          SMM_IMAGE_LINK, SMM_TG_POST_ID, SMM_VK_POST_ID, SMM_OK_POST_ID, SMM_DELETE_POST)
-from publish_on_tg import send_post, send_animation_image, delete_tg_post
+from publish_on_ok import delete_ok_post, publish_to_ok
+from publish_on_tg import delete_tg_post, send_animation_image, send_post
+from publish_on_vk import delete_vk_post, publish_to_vk
+from spreadsheets import (
+    SMM_DATE_ACTUAL_POST, SMM_DATE_POST, SMM_DELETE_POST, SMM_GOOGLE_DOC, SMM_IMAGE_LINK, SMM_OK, SMM_OK_POST_ID,
+    SMM_TG, SMM_TG_POST_ID, SMM_TIME_POST, SMM_VK, SMM_VK_POST_ID, get_file, get_parsed_file, get_rows_for_posts,
+    update_post_id,
+)
 
 
 def fetch_gif_image(image_url):
@@ -40,11 +38,9 @@ def format_text(text):
     return formated_txt
 
 
-
 def get_datetime(date, time='00:00:00'):
     post_datetime = f"{date} {time}"
     return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
-
 
 
 def main():
@@ -82,7 +78,6 @@ def main():
         min_range_row.value = int(min_row) + 1
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
-
 
     for row in rows_for_post:
         if not row[SMM_DATE_POST].value:
