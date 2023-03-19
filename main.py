@@ -45,7 +45,7 @@ def main():
     # Telegram Secret
     telegram_token = os.getenv("TELEGRAM_TOKEN")
     telegram_chat_id = os.getenv("TELEGRAM_CHAT_ID")
-    bot = telegram.Bot(token=telegram_token)
+    # bot = telegram.Bot(token=telegram_token)
     # vkontakte secret
     vk_token = os.getenv('VK_ACCESS_TOKEN')
     vk_group_id = os.getenv('VK_GROUP_ID')
@@ -106,10 +106,10 @@ def main():
         elif image_link:
             text = None
             image = fetch_gif_image(image_link)
-            bot = telegram.Bot(token=telegram_token)
-            if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
-                post_id = run(send_animation_image(telegram_chat_id, bot, image))
-                update_post_id(row, post_id, network='TG')
+            # bot = telegram.Bot(token=telegram_token)
+            # if row[SMM_TG].value == 'TRUE' and row[SMM_TG_POST_ID].value == '':
+            #     post_id = run(send_animation_image(telegram_chat_id, bot, image))
+            #     update_post_id(row, post_id, network='TG')
             if row[SMM_VK].value == 'TRUE' and row[SMM_VK_POST_ID].value == '':
                 post_id = publish_to_vk(image, '', vk_token, vk_group_id,
                         vk_ver)
@@ -120,7 +120,7 @@ def main():
     for row in rows_for_delete:
         delete_date = row[SMM_DATE_ACTUAL_POST].value
         print(delete_date)
-        if delete_date > today:
+        if delete_date != today:
             continue
         if row[SMM_VK_POST_ID]:
             print('qwe')
