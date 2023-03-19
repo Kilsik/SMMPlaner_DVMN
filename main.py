@@ -1,25 +1,31 @@
 import datetime
 import os
-import time
 import re
+import time
 from asyncio import run
-
 
 import pygsheets
 import requests
 import schedule
 import telegram
-
-from publish_on_vk import publish_to_vk, delete_vk_post
-from publish_on_ok import publish_to_ok, delete_ok_post
-
 from dotenv import load_dotenv
+
+
+from publish_on_ok import delete_ok_post, publish_to_ok
+from publish_on_tg import delete_tg_post, send_animation_image, send_post
+from publish_on_vk import delete_vk_post, publish_to_vk
+from spreadsheets import (
+    SMM_DATE_ACTUAL_POST, SMM_DATE_POST, SMM_DELETE_POST, SMM_GOOGLE_DOC, SMM_IMAGE_LINK, SMM_OK, SMM_OK_POST_ID,
+    SMM_TG, SMM_TG_POST_ID, SMM_TIME_POST, SMM_VK, SMM_VK_POST_ID, get_file, get_parsed_file, get_rows_for_posts,
+    update_post_id,
+)
 
 
 from spreadsheets import (get_rows_for_posts, get_file, get_parsed_file, update_post_id,
                           SMM_TG, SMM_OK, SMM_VK, SMM_DATE_POST, SMM_TIME_POST, SMM_DATE_ACTUAL_POST, SMM_GOOGLE_DOC,
                           SMM_IMAGE_LINK, SMM_TG_POST_ID, SMM_VK_POST_ID, SMM_OK_POST_ID, SMM_DELETE_POST)
 from publish_on_tg import send_post, send_animation_image, delete_tg_post
+
 
 
 def fetch_gif_image(image_url):
@@ -40,11 +46,9 @@ def format_text(text):
     return formated_txt
 
 
-
 def get_datetime(date, time='00:00:00'):
     post_datetime = f"{date} {time}"
     return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
-
 
 
 def main():
@@ -82,8 +86,6 @@ def main():
         min_range_row.value = int(min_row) + 1
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
-
-
     for row in rows_for_post:
         if not row[SMM_DATE_POST].value:
             date_post = today
@@ -118,6 +120,8 @@ def main():
                 post_id = run(send_post(telegram_chat_id, bot, text, image))
                 update_post_id(row, post_id, network='TG')
         if gif_image:
+            if image:
+                os.remove(image)
             image = gif_image
         if row[SMM_VK].value != 'FALSE' and row[SMM_VK_POST_ID].value == '':
             post_id = publish_to_vk(image, text, vk_token,
@@ -126,6 +130,8 @@ def main():
         if row[SMM_OK].value != 'FALSE' and row[SMM_OK_POST_ID].value == '':
             post_id = publish_to_ok(ok_app_key, ok_access_token, ok_sesion_key, ok_group_id, text, image)
             update_post_id(row, post_id, network='OK')
+        if image:
+            os.remove(image)
     for row in rows_for_delete:
         delete_date = row[SMM_DATE_ACTUAL_POST].value
         if delete_date > today:
@@ -141,14 +147,16 @@ def main():
             if row[SMM_OK_POST_ID].value:
                 post_id = row[SMM_OK_POST_ID].value
                 delete_ok_post(ok_app_key, ok_access_token, ok_sesion_key, post_id)
+        except telegram.error.BadRequest:
+            print('Message to delete not found')
+        finally:
             row[SMM_DELETE_POST].value = True
-        except:
-            pass
 
 
 if __name__ == '__main__':
-    n = os.getenv('TIME_INTERVAL')
-    schedule.every(10).seconds.do(main)
+    load_dotenv()
+    time_interval = int(os.getenv('TIME_INTERVAL'))
+    schedule.every(time_interval).seconds.do(main)
     while True:
         print(schedule.next_run())
         schedule.run_pending()
