@@ -87,8 +87,3 @@ def get_rows_for_posts(all_table_rows):
         elif row[SMM_DATE_ACTUAL_POST].value and row[SMM_DELETE_POST].value == 'FALSE':
             rows_for_delete.append(row)
     return rows_for_post, rows_for_delete
-
-
-def get_datetime(date, time='00:00:00'):
-    post_datetime = f"{date} {time}"
-    return datetime.datetime.strptime(post_datetime, '%d.%m.%Y %H:%M:%S')
