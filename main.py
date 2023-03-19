@@ -10,6 +10,7 @@ import schedule
 import telegram
 from dotenv import load_dotenv
 
+
 from publish_on_ok import delete_ok_post, publish_to_ok
 from publish_on_tg import delete_tg_post, send_animation_image, send_post
 from publish_on_vk import delete_vk_post, publish_to_vk
@@ -18,6 +19,13 @@ from spreadsheets import (
     SMM_TG, SMM_TG_POST_ID, SMM_TIME_POST, SMM_VK, SMM_VK_POST_ID, get_file, get_parsed_file, get_rows_for_posts,
     update_post_id,
 )
+
+
+from spreadsheets import (get_rows_for_posts, get_file, get_parsed_file, update_post_id,
+                          SMM_TG, SMM_OK, SMM_VK, SMM_DATE_POST, SMM_TIME_POST, SMM_DATE_ACTUAL_POST, SMM_GOOGLE_DOC,
+                          SMM_IMAGE_LINK, SMM_TG_POST_ID, SMM_VK_POST_ID, SMM_OK_POST_ID, SMM_DELETE_POST)
+from publish_on_tg import send_post, send_animation_image, delete_tg_post
+
 
 
 def fetch_gif_image(image_url):
