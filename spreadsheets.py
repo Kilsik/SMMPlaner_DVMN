@@ -1,10 +1,8 @@
 import base64
-import datetime
+import os
 
 import requests
 from docx_parser import DocumentParser
-
-
 
 SMM_TG = 0
 SMM_OK = 1
@@ -63,6 +61,7 @@ def get_parsed_file(path):
             recovered = base64.b64decode(img_data)
             with open(filename, 'wb') as file:
                 file.write(recovered)
+    os.remove(path)
     return ' '.join(text), filename
 
 
