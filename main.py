@@ -16,7 +16,7 @@ from publish_on_ok import publish_to_ok, delete_ok_post
 from dotenv import load_dotenv
 
 
-from spreadsheets import (get_rows_for_posts, get_file, get_parsed_file, update_post_id, get_time_to_post,
+from spreadsheets import (get_rows_for_posts, get_file, get_parsed_file, update_post_id,
                           SMM_TG, SMM_OK, SMM_VK, SMM_DATE_POST, SMM_TIME_POST, SMM_DATE_ACTUAL_POST, SMM_GOOGLE_DOC,
                           SMM_IMAGE_LINK, SMM_TG_POST_ID, SMM_VK_POST_ID, SMM_OK_POST_ID, SMM_DELETE_POST)
 from publish_on_tg import send_post, send_animation_image, delete_tg_post
