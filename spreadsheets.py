@@ -63,6 +63,7 @@ def get_rows_for_posts(all_table_rows):
             rows_for_post.append(row)
         elif row[SMM_VK].value == 'TRUE' and row[SMM_VK_POST_ID].value == '':
             rows_for_post.append(row)
-        elif row[SMM_DATE_ACTUAL_POST].value and row[SMM_DELETE_POST].value == 'FALSE':
+        elif row[SMM_DATE_ACTUAL_POST].value and row[SMM_DELETE_POST].value == 'FALSE' and (
+                row[SMM_TG_POST_ID].value != '' or row[SMM_OK_POST_ID].value != '' or row[SMM_VK_POST_ID].value != ''):
             rows_for_delete.append(row)
     return rows_for_post, rows_for_delete
