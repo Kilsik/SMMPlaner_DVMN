@@ -1,10 +1,9 @@
 import base64
 import datetime
+import os
 
 import requests
 from docx_parser import DocumentParser
-
-
 
 SMM_TG = 0
 SMM_OK = 1
@@ -32,9 +31,9 @@ def get_time_to_post(date, time, n):
         post_time = get_datetime(date, time)
     else:
         post_time = datetime.datetime.combine(datetime.date.today(),
-            datetime.datetime.now().time()) + datetime.timedelta(minuts=1)
+                                              datetime.datetime.now().time()) + datetime.timedelta(minuts=1)
     current_time = datetime.datetime.now()
-    delta = current_time-post_time
+    delta = current_time - post_time
     zero_time = datetime.timedelta(microseconds=0)
     if zero_time <= (post_time - current_time) <= time_interval:
         return True
@@ -61,6 +60,7 @@ def get_parsed_file(path):
             recovered = base64.b64decode(img_data)
             with open(filename, 'wb') as file:
                 file.write(recovered)
+    os.remove(path)
     return ' '.join(text), filename
 
 
