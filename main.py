@@ -78,7 +78,6 @@ def main():
         min_range_row.value = int(min_row) + 1
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
-
     for row in rows_for_post:
         if not row[SMM_DATE_POST].value:
             date_post = today
@@ -113,7 +112,8 @@ def main():
                 post_id = run(send_post(telegram_chat_id, bot, text, image))
                 update_post_id(row, post_id, network='TG')
         if gif_image:
-            os.remove(image)
+            if image:
+                os.remove(image)
             image = gif_image
         if row[SMM_VK].value != 'FALSE' and row[SMM_VK_POST_ID].value == '':
             post_id = publish_to_vk(image, text, vk_token,
@@ -139,14 +139,16 @@ def main():
             if row[SMM_OK_POST_ID].value:
                 post_id = row[SMM_OK_POST_ID].value
                 delete_ok_post(ok_app_key, ok_access_token, ok_sesion_key, post_id)
+        except telegram.error.BadRequest:
+            print('Message to delete not found')
+        finally:
             row[SMM_DELETE_POST].value = True
-        except:
-            pass
 
 
 if __name__ == '__main__':
-    n = os.getenv('TIME_INTERVAL')
-    schedule.every(10).seconds.do(main)
+    load_dotenv()
+    time_interval = int(os.getenv('TIME_INTERVAL'))
+    schedule.every(time_interval).seconds.do(main)
     while True:
         print(schedule.next_run())
         schedule.run_pending()
