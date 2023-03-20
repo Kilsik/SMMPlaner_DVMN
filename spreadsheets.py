@@ -1,8 +1,10 @@
 import base64
 import os
 
+
 import requests
 from docx_parser import DocumentParser
+
 
 SMM_TG = 0
 SMM_OK = 1
@@ -34,11 +36,12 @@ def get_parsed_file(path):
         if _type == 'paragraph':
             text.append(item['text'])
         elif _type == 'multipart':
-            img_data = item[1]['image'].split(',')[1]
-            filename = item[1]['filename']
-            recovered = base64.b64decode(img_data)
-            with open(filename, 'wb') as file:
-                file.write(recovered)
+            if not filename:
+                img_data = item[1]['image'].split(',')[1]
+                filename = item[1]['filename']
+                recovered = base64.b64decode(img_data)
+                with open(filename, 'wb') as file:
+                    file.write(recovered)
     os.remove(path)
     return ' '.join(text), filename
 
