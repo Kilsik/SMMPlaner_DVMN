@@ -71,10 +71,11 @@ def main():
     today = date_now.date().strftime('%d.%m.%Y')
     time_now = date_now.strftime('%H:%M:00')
     post_punlish = worksheet_smm.cell(f'M{min_row}').value
+    post_delete = worksheet_smm.cell(f'L{min_row}').value
     min_range_row = worksheet_smm.cell('M1')
     if post_punlish == 'TRUE' and not worksheet_smm.cell(f'F{min_row}').value:
         min_range_row.value = int(min_row) + 1
-    elif post_punlish == 'TRUE' and worksheet_smm.cell(f'F{min_row}').value < today:
+    elif post_punlish == 'TRUE' and post_delete == 'TRUE':
         min_range_row.value = int(min_row) + 1
     all_table_rows = worksheet_smm.range(f'{min_row}:{max_row}', returnas='cell')
     rows_for_post, rows_for_delete = get_rows_for_posts(all_table_rows)
