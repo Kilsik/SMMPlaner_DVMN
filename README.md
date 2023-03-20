@@ -1,21 +1,30 @@
 # SMM Planer
 
-`SMM planer` – this code will help you to organize and make post by the date and time in such social 
-networks and messengers as: `Vkontakte`, `Odnoklassniki`, `Telegram`. 
+`SMM planer` – this code will help you to organize and make post by the date and time in such social
+networks and messengers as: `Vkontakte`, `Odnoklassniki`, `Telegram`.
 Create and fill in Google Sheets as in an  
-<a href='https://docs.google.com/spreadsheets/d/1T8x2uYu_mdn6N-R7Wzjq8lK_3US016PxYhtCJHdG5cw/edit?usp=sharing'>example</a>.
-
+<a href='https://docs.google.com/spreadsheets/d/1T8x2uYu_mdn6N-R7Wzjq8lK_3US016PxYhtCJHdG5cw/edit?usp=sharing'>
+example</a>.
 
 ## Setup
 
-Python3 have to be already installed. Then use pip (or pip3, there is a contravention with Python2) to install dependencies:
+Python3 have to be already installed. Then use pip (or pip3, there is a contravention with Python2) to install
+dependencies:
 
 ### 1. Install requirements
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### 2. Create `.env` and place your secrets accordingly
+
+To work with the service you need to configure the interaction with the API Google and social networks:
+
+- [Google API](https://pygsheets.readthedocs.io/en/stable/authorization.html)
+- [Telegram API](https://core.telegram.org/api#getting-started)
+- [VKontakte API](https://dev.vk.com/api/callback/getting-started)
+- [Odnoklassniki API](https://apiok.ru/)
 
 ```bash
 TELEGRAM_TOKEN=place_your_token_here
@@ -31,29 +40,8 @@ SPREADSHEET_SMM_KEY='place_your_spreadsheet_key'
 TIME_INTERVAL=60
 ```
 
-#### Receiving keys from `Google Sheets API`
-<ol>
-  <li>Follow this <a href='https://developers.google.com/sheets/api/quickstart/python'>link</a>.</li>
-  <li>Push the button `Enable the Google Sheets API` to download the keys to your account in `Google`.</li>
-  <li>Put in data in the folder of the project.</li> 
-</ol>
-
-#### Receiving keys from `OK API`
-
-Follow this <a href='https://apiok.ru/dev/'>link</a>.
-
-
-#### Receiving keys from `VK API`
-
-Follow this <a href='https://dev.vk.com/reference'>link</a>.
-
-
-#### Receiving keys from `Telegram API`
-
-Follow this <a href='https://core.telegram.org/api'>link</a>.
-
-
 #### How to connect `Google Sheets `
+
 <ol>
   <li>Open the website, `Google Sheets`.</li>
   <li>In the address bar, there will be a link of this type: `https://docs.google.com/spreadsheets/d/1Fc8GpOupbms651ikJo6y0esBFSqlVWCxeTmP-YgO5qs`.</li>
@@ -61,10 +49,10 @@ Follow this <a href='https://core.telegram.org/api'>link</a>.
 </ol>
 
 #### Receiving keys from `Authorizing pygsheets`
+
 <ol>
   <li>Follow this <a href='https://pygsheets.readthedocs.io/en/stable/authorization.html'>link</a>.</li>
 </ol>
-
 
 ### 3. Run
 

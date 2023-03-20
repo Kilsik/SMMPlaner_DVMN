@@ -126,7 +126,7 @@ def main():
             update_post_id(row, post_id, network='OK')
         if image:
             os.remove(image)
-            time.sleep(3)
+        time.sleep(3)
     for row in rows_for_delete:
         delete_date = row[SMM_DATE_ACTUAL_POST].value
         if delete_date > today:
