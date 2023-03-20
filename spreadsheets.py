@@ -1,4 +1,5 @@
 import base64
+import os
 import datetime
 
 import requests
@@ -55,14 +56,17 @@ def get_parsed_file(path):
     text = []
     filename = None
     for _type, item in doc.parse():
+        print(_type, item)
         if _type == 'paragraph':
             text.append(item['text'])
         elif _type == 'multipart':
-            img_data = item[1]['image'].split(',')[1]
-            filename = item[1]['filename']
-            recovered = base64.b64decode(img_data)
-            with open(filename, 'wb') as file:
-                file.write(recovered)
+            if not filename:
+                img_data = item[1]['image'].split(',')[1]
+                filename = item[1]['filename']
+                recovered = base64.b64decode(img_data)
+                with open(filename, 'wb') as file:
+                    file.write(recovered)
+    os.remove(path)
     return ' '.join(text), filename
 
 
