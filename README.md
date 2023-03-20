@@ -3,7 +3,7 @@
 `SMM planer` – this code will help you to organize and make post by the date and time in such social 
 networks and messengers as: `Vkontakte`, `Odnoklassniki`, `Telegram`. 
 Create and fill in Google Sheets as in an  
-<a href='[https://docs.google.com/spreadsheets/d/1Fc8GpOupbms651ikJo6y0esBFSqlVWCxeTmP-YgO5qs/](https://docs.google.com/spreadsheets/d/1T8x2uYu_mdn6N-R7Wzjq8lK_3US016PxYhtCJHdG5cw/edit?usp=sharing)'>example</a>.
+<a href='https://docs.google.com/spreadsheets/d/1T8x2uYu_mdn6N-R7Wzjq8lK_3US016PxYhtCJHdG5cw/edit?usp=sharing'>example</a>.
 
 
 ## Setup
