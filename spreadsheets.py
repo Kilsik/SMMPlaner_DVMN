@@ -5,6 +5,7 @@ import os
 import requests
 from docx_parser import DocumentParser
 
+
 SMM_TG = 0
 SMM_OK = 1
 SMM_VK = 2
