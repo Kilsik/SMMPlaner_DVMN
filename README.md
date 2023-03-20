@@ -39,19 +39,19 @@ TIME_INTERVAL=60
 </ol>
 
 #### Receiving keys from `OK API`
-<ol>
-  <li>Follow this <a href='https://apiok.ru/dev/'>link</a>.</li>
-</ol>
+
+Follow this <a href='https://apiok.ru/dev/'>link</a>.
+
 
 #### Receiving keys from `VK API`
-<ol>
-  <li>Follow this <a href='https://dev.vk.com/reference'>link</a>.</li>
-</ol>
+
+Follow this <a href='https://dev.vk.com/reference'>link</a>.
+
 
 #### Receiving keys from `Telegram API`
-<ol>
-  <li>Follow this <a href='https://core.telegram.org/api'>link</a>.</li>
-</ol>
+
+Follow this <a href='https://core.telegram.org/api'>link</a>.
+
 
 #### How to connect `Google Sheets `
 <ol>
