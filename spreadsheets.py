@@ -1,11 +1,9 @@
 import base64
 import os
-import datetime
+
 
 import requests
 from docx_parser import DocumentParser
-
-
 
 SMM_TG = 0
 SMM_OK = 1
@@ -20,28 +18,6 @@ SMM_VK_POST_ID = 9
 SMM_OK_POST_ID = 10
 SMM_DELETE_POST = 11
 SMM_POSTS_PUBLISH = 12
-
-
-# def get_time_to_post(date, time, n):
-#     '''
-#     Чтобы выбрать посты, которые надо публиковать сейчас или в ближайшие n минут
-#     '''
-#
-#     time_interval = datetime.timedelta(minutes=int(n))
-#     if not date:
-#         return True
-#     if time:
-#         post_time = get_datetime(date, time)
-#     else:
-#         post_time = datetime.datetime.combine(datetime.date.today(),
-#             datetime.datetime.now().time()) + datetime.timedelta(minuts=1)
-#     current_time = datetime.datetime.now()
-#     delta = current_time-post_time
-#     zero_time = datetime.timedelta(microseconds=0)
-#     if zero_time <= (post_time - current_time) <= time_interval:
-#         return True
-#     else:
-#         return False
 
 
 def update_post_id(row, post_id, network):
@@ -90,6 +66,7 @@ def get_rows_for_posts(all_table_rows):
             rows_for_post.append(row)
         elif row[SMM_VK].value == 'TRUE' and row[SMM_VK_POST_ID].value == '':
             rows_for_post.append(row)
-        elif row[SMM_DATE_ACTUAL_POST].value and row[SMM_DELETE_POST].value == 'FALSE':
+        elif row[SMM_DATE_ACTUAL_POST].value and row[SMM_DELETE_POST].value == 'FALSE' and (
+                row[SMM_TG_POST_ID].value != '' or row[SMM_OK_POST_ID].value != '' or row[SMM_VK_POST_ID].value != ''):
             rows_for_delete.append(row)
     return rows_for_post, rows_for_delete
