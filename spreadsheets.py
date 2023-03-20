@@ -33,7 +33,6 @@ def get_parsed_file(path):
     text = []
     filename = None
     for _type, item in doc.parse():
-        print(_type, item)
         if _type == 'paragraph':
             text.append(item['text'])
         elif _type == 'multipart':
