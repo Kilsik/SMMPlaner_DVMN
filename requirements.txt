@@ -4,3 +4,4 @@ python-dotenv==1.0.0
 python-telegram-bot==20.1
 requests==2.28.2
 schedule==1.1.0
+retry==0.9.2
