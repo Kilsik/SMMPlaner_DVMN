@@ -6,8 +6,8 @@ async def send_post(telegram_chat_id, bot, text, image):
     return message['message_id']
 
 
-async def send_animation_image(telegram_chat_id, bot, image):
-    message = await bot.sendAnimation(chat_id=telegram_chat_id, animation=image)
+async def send_animation_image(telegram_chat_id, bot, image, text):
+    message = await bot.sendAnimation(chat_id=telegram_chat_id, animation=image, caption=text)
     return message['message_id']
 
 
