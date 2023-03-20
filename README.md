@@ -16,6 +16,12 @@ pip install -r requirements.txt
 ```
 
 ### 2. Create `.env` and place your secrets accordingly
+To work with the service you need to configure the interaction with the API Google and social networks:
+
+- [Google API](https://pygsheets.readthedocs.io/en/stable/authorization.html)
+- [Telegram API](https://core.telegram.org/api#getting-started)
+- [VKontakte API](https://dev.vk.com/api/callback/getting-started)
+- [Odnoklassniki API](https://apiok.ru/)
 
 ```bash
 TELEGRAM_TOKEN=place_your_token_here
