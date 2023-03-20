@@ -126,4 +126,3 @@ def publish_to_ok(app_key, token, session_key, group_id, text=None, img_filename
 
         post_id = publish_post_to_ok(app_key, token, session_key, group_id, text, photo_token)
     return post_id
-

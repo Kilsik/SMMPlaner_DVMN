@@ -1,5 +1,4 @@
 import requests
-#import os
 import spreadsheets
 
 
@@ -142,5 +141,4 @@ def publish_to_vk(img_filename, comment, vk_token, vk_group_id, vk_ver):
             vk_ver, owner_id, media_id)
     except VKException as error:
         print(error)
-    print(post_id)
     return post_id['response']['post_id']

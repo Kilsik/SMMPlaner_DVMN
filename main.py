@@ -116,8 +116,10 @@ def main():
                 os.remove(image)
             image = gif_image
         if row[SMM_VK].value != 'FALSE' and row[SMM_VK_POST_ID].value == '':
-            post_id = publish_to_vk(image, text, vk_token,
-                                    vk_group_id, vk_ver)
+            if gif_image:
+                post_id = publish_to_vk(gif_image, text, vk_token, vk_group_id, vk_ver)
+            else:
+                post_id = publish_to_vk(image, text, vk_token, vk_group_id, vk_ver)
             update_post_id(row, post_id, network='VK')
         if row[SMM_OK].value != 'FALSE' and row[SMM_OK_POST_ID].value == '':
             post_id = publish_to_ok(ok_app_key, ok_access_token, ok_sesion_key, ok_group_id, text, image)
